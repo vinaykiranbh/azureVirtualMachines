@@ -41,7 +41,7 @@ class Config:
         return Config.data["vnet_address"]
     
     @staticmethod
-    def getLocation() -> str:
+    def getLocation() -> list:
         return Config.data["location"]
     
     @staticmethod
