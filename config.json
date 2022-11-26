@@ -16,5 +16,6 @@
     "no_of_ip": 2,
     "SecurityGroupname": "testGroupName",
     "inboundrulename": "testRuleInbound",
-    "outboundrulename": "testOutboundRule"
+    "outboundrulename": "testOutboundRule",
+    "SSHKeyName": "vinay"
 }

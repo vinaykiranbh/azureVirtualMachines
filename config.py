@@ -79,3 +79,7 @@ class Config:
     @staticmethod
     def getoutboundRuleName() -> str:
         return Config.data["outboundrulename"]
+
+    @staticmethod
+    def getSSHKeyName() -> str:
+        return Config.data['SSHKeyName']

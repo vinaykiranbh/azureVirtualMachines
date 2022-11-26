@@ -1,0 +1,102 @@
+{
+    "Courses": [
+        {
+            "CourseID": 1,
+            "NumCredits": 10,
+            "Title": "Secure Software Engineering (2228)",
+            "CatalogNbr": 360,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 2,
+            "NumCredits": 10,
+            "Title": "Secure Programming in the Cloud (2228)",
+            "CatalogNbr": 400,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 3,
+            "NumCredits": 10,
+            "Title": "The Roman Republic (2228)",
+            "CatalogNbr": 326,
+            "Subject": "HIST"
+        },
+        {
+            "CourseID": 4,
+            "NumCredits": 10,
+            "Title": "Mitigating Software Vulnerabilities (2232)",
+            "CatalogNbr": 425,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 5,
+            "NumCredits": 10,
+            "Title": "Software Security Testing (2232)",
+            "CatalogNbr": 460,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 6,
+            "NumCredits": 10,
+            "Title": "Current Trends and Projects in Computer Science (2232)",
+            "CatalogNbr": 495,
+            "Subject": "CMSC"
+        },
+        {
+            "CourseID": 7,
+            "NumCredits": 10,
+            "Title": "Introduction to Biology (2232)",
+            "CatalogNbr": 103,
+            "Subject": "BIOL"
+        },
+        {
+            "CourseID": 8,
+            "NumCredits": 10,
+            "Title": "Intermediate Programming (2222)",
+            "CatalogNbr": 242,
+            "Subject": "CMIS"
+        },
+        {
+            "CourseID": 9,
+            "NumCredits": 10,
+            "Title": "Relational Database Concepts and Applications (2222)",
+            "CatalogNbr": 320,
+            "Subject": "CMIS"
+        },
+        {
+            "CourseID": 10,
+            "NumCredits": 10,
+            "Title": "Academic Writing II (2222)",
+            "CatalogNbr": 112,
+            "Subject": "WRTG"
+        },
+        {
+            "CourseID": 11,
+            "NumCredits": 10,
+            "Title": "Advanced Technical Writing (2228)",
+            "CatalogNbr": 393,
+            "Subject": "WRTG"
+        },
+        {
+            "CourseID": 12,
+            "NumCredits": 10,
+            "Title": "Detecting Software Vulnerabilities (2228)",
+            "CatalogNbr": 325,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 13,
+            "NumCredits": 10,
+            "Title": "Database Security (2228)",
+            "CatalogNbr": 350,
+            "Subject": "SDEV"
+        },
+        {
+            "CourseID": 14,
+            "NumCredits": 10,
+            "Title": "Academic Writing I (2222)",
+            "CatalogNbr": 111,
+            "Subject": "WRTG"
+        }
+    ]
+}

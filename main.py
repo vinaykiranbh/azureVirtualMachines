@@ -28,32 +28,42 @@ def main():
         credential=cred,
         subscription_id=SUBSCRIPTION_ID
     )
-
     
-    res = []
+    network_client = NetworkManagementClient(
+            credential=cred,
+            subscription_id=SUBSCRIPTION_ID
+    )
+    
+    compute_client = ComputeManagementClient(
+            credential=cred,
+            subscription_id=SUBSCRIPTION_ID
+    )
+
+    # Step 1: Provision a resource group
+    # Create resource group
+    
     for loc in location:
         GROUP_NAME = loc
         result_check = resource_client.resource_groups.check_existence(
-        GROUP_NAME
+            GROUP_NAME
         )
-        VM_NAME = Config.getVirtualMachineName() + loc
-        NSG_NAME = Config.getSecurityGroupName() + loc
-        NSG_INBOUND_RULE_NAME = Config.getinboundRuleName() + loc
-        NSG_OUTBOUND_RULE_NAME = Config.getoutboundRuleName() + loc
-        # Step 1: Provision a resource group
-        # Create resource group
+        
+        
         if result_check != True:
             resource_client.resource_groups.create_or_update(
                 resource_group_name=GROUP_NAME,
                 parameters={"location": loc}  # type: ignore
             )
-
+    
+    res = []
+    for loc in location:
+        GROUP_NAME = loc
+        VM_NAME = Config.getVirtualMachineName() + loc
+        NSG_NAME = Config.getSecurityGroupName() + loc
+        NSG_INBOUND_RULE_NAME = Config.getinboundRuleName() + loc
+        NSG_OUTBOUND_RULE_NAME = Config.getoutboundRuleName() + loc
+        
         # Step 2: provision a virtual network
-
-        network_client = NetworkManagementClient(
-            credential=cred,
-            subscription_id=SUBSCRIPTION_ID
-        )
 
         VNET_NAME = Config.getVnetName() + loc
         SUBNET_NAME = Config.getSubnetName() + loc
@@ -74,7 +84,7 @@ def main():
         # type: ignore
         print(
             f"Provisioned virtual network {vnet_result.name} with address prefixes {vnet_result.address_space.address_prefixes}")
-
+        print(vnet_result)
         # Step 3: Provision the subnet and wait for completion
         subnet_result = network_client.subnets.begin_create_or_update(
             resource_group_name=GROUP_NAME,
@@ -83,10 +93,10 @@ def main():
             subnet_parameters={
                 "address_prefix": Config.getSubnetAddress()}  # type: ignore
         ).result()
-
+        
         print(
             f"Provisioned virtual subnet {subnet_result.name} with address prefix {subnet_result.address_prefix}")
-
+        print(subnet_result)
         # Step 4: Provision an IP address and wait for completion
         ipAddress = []
         ip_add = []
@@ -106,6 +116,7 @@ def main():
                 f"Provisioned public IP address {ip_address_result.name} with address {ip_address_result.ip_address}")
             ip_add.append(ip_address_result.id)
             ipAddress.append(ip_address_result.ip_address)
+            print(ip_address_result)
 
         ip_config = []
         for j in range(0, len(ip_add)):
@@ -133,7 +144,7 @@ def main():
             parameters=nsg_parameters
         ).result()
         print("Create Network Security Group:{}".format(network_security_group.name))
-
+        
         # Create Network Security Group Rule
         nsg_rule_parameters = network_models.SecurityRule(
             protocol='*',
@@ -143,7 +154,7 @@ def main():
             destination_address_prefix='*',
             destination_port_range='*',
             access='allow',
-            priority=200
+            priority=100
         )
         nsg_rule_parameters1 = network_models.SecurityRule(
             protocol='*',
@@ -153,7 +164,7 @@ def main():
             destination_address_prefix='*',
             destination_port_range='*',
             access='allow',
-            priority=200
+            priority=100
         )
         nsg_rule = network_client.security_rules.begin_create_or_update(
             GROUP_NAME,
@@ -182,14 +193,11 @@ def main():
         ).result()
 
         print(f"Provisioned network interface client {nic_result.name}")
-
+        print(nic_result)
         # Step 6: Provision the virtual machine
 
         # Obtain the management object for virtual machines
-        compute_client = ComputeManagementClient(
-            credential=cred,
-            subscription_id=SUBSCRIPTION_ID
-        )
+        
 
         USERNAME = Config.getAdminUsername()
         PASSWORD = Config.getAdminPassword()
@@ -199,6 +207,10 @@ def main():
 
         # Provision the VM specifying only minimal arguments, which defaults to an Ubuntu 18.04 VM
         # on a Standard DS1 v2 plan with a public IP address and a default virtual network/subnet.
+        ssh_key = compute_client.ssh_public_keys.get(
+            resource_group_name=GROUP_NAME,
+            ssh_public_key_name= Config.getSSHKeyName()
+        ).public_key
 
         vm_result = compute_client.virtual_machines.begin_create_or_update(
             resource_group_name=GROUP_NAME,
@@ -219,7 +231,18 @@ def main():
                 "os_profile": {
                     "computer_name": VM_NAME,
                     "admin_username": USERNAME,
-                    "admin_password": PASSWORD
+                    "admin_password": PASSWORD,
+                    "linux_configuration": {
+                        "disable_password_authentication": True,
+                        "ssh": {
+                            "public_keys": [
+                                {
+                                    "key_data": ssh_key,
+                                    "path": '/home/{}/.ssh/authorized_keys'.format(USERNAME)
+                                }
+                            ]
+                        }
+            }
                 },
                 "network_profile": {
                     "network_interfaces": [{
@@ -231,9 +254,9 @@ def main():
                 }
             }  # type: ignore
         ).result()
-
+        
         print(f"Provisioned virtual machine {vm_result.name}")
-
+        print(vm_result)
         result = {"Primary IP": ipAddress[0], "Secondary IP": ipAddress[1:],
                 "Virtual Machine Name": VM_NAME, "Group Name": GROUP_NAME, "Subscription ID": SUBSCRIPTION_ID}
         res.append(result)
